@@ -31,7 +31,7 @@ if __name__=="__main__":
     max_iter = 100
     vocab_size = len(vocab)
 
-    gpt = GPT(n_embd,num_heads,head_size, block_size, vocab_size)
+    gpt = GPT(num_heads,n_embd,head_size, block_size, vocab_size)
 
 
     optimizer = torch.optim.AdamW(gpt.parameters(), lr = 1e-3)

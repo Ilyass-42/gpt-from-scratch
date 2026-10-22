@@ -41,7 +41,7 @@ if __name__=="__main__":
         if i % 10 == 0:
             gpt.eval() # disables dropout
             with torch.no_grad():
-                x, y = get_batch(val_data, batch_size=batch_size, block_size=8)
+                x, y = get_batch(val_data, batch_size=batch_size, block_size=block_size)
                 logits = gpt(x) # 4, 8, 65
                 logits = logits.view(batch_size*block_size, vocab_size)
                 y_ = y.view(batch_size*block_size)

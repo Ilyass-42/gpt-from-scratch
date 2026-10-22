@@ -38,6 +38,17 @@ if __name__=="__main__":
     loss = nn.CrossEntropyLoss()
 
     for i in range(max_iter):
+        if i % 10 == 0:
+            gpt.eval() # disables dropout
+            with torch.no_grad():
+                x, y = get_batch(val_data, batch_size=batch_size, block_size=8)
+                logits = gpt(x) # 4, 8, 65
+                logits = logits.view(batch_size*block_size, vocab_size)
+                y_ = y.view(batch_size*block_size)
+                loss_value = loss(logits, y_)
+                print(f"Validation iteration : {i}, val loss : {loss_value.item():.4f}")
+        gpt.train() # enables the dropout
+
         x, y = get_batch(train_data, batch_size=batch_size, block_size=8)
 
         logits = gpt(x) # 4, 8, 65

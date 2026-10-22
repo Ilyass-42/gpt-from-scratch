@@ -49,7 +49,7 @@ if __name__=="__main__":
                 print(f"Validation iteration : {i}, val loss : {loss_value.item():.4f}")
         gpt.train() # enables the dropout
 
-        x, y = get_batch(train_data, batch_size=batch_size, block_size=8)
+        x, y = get_batch(train_data, batch_size=batch_size, block_size=block_size)
 
         logits = gpt(x) # 4, 8, 65
         logits = logits.view(batch_size*block_size, vocab_size)

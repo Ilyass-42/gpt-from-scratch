@@ -27,7 +27,7 @@ if __name__=="__main__":
     n_embd = 128
     num_heads = 4
     head_size = 32
-    block_size = 8
+    block_size = 64
     max_iter = 100
     vocab_size = len(vocab)
 

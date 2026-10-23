@@ -28,7 +28,7 @@ if __name__=="__main__":
     num_heads = 4
     head_size = 32
     block_size = 64
-    max_iter = 100
+    max_iter = 5000
     vocab_size = len(vocab)
 
     gpt = GPT(num_heads,n_embd,head_size, block_size, vocab_size)

@@ -37,32 +37,35 @@ if __name__=="__main__":
     optimizer = torch.optim.AdamW(gpt.parameters(), lr = 1e-3)
     loss = nn.CrossEntropyLoss()
 
-    for i in range(max_iter):
-        if i % 10 == 0:
-            gpt.eval() # disables dropout
-            with torch.no_grad():
-                x, y = get_batch(val_data, batch_size=batch_size, block_size=block_size)
-                logits = gpt(x) # 4, 8, 65
-                logits = logits.view(batch_size*block_size, vocab_size)
-                y_ = y.view(batch_size*block_size)
-                loss_value = loss(logits, y_)
-                print(f"Validation iteration : {i}, val loss : {loss_value.item():.4f}")
-        gpt.train() # enables the dropout
+    # for i in range(max_iter):
+    #     if i % 10 == 0:
+    #         gpt.eval() # disables dropout
+    #         with torch.no_grad():
+    #             x, y = get_batch(val_data, batch_size=batch_size, block_size=block_size)
+    #             logits = gpt(x) # 4, 8, 65
+    #             logits = logits.view(batch_size*block_size, vocab_size)
+    #             y_ = y.view(batch_size*block_size)
+    #             loss_value = loss(logits, y_)
+    #             print(f"Validation iteration : {i}, val loss : {loss_value.item():.4f}")
+    #     gpt.train() # enables the dropout
 
-        x, y = get_batch(train_data, batch_size=batch_size, block_size=block_size)
+    #     x, y = get_batch(train_data, batch_size=batch_size, block_size=block_size)
 
-        logits = gpt(x) # 4, 8, 65
-        logits = logits.view(batch_size*block_size, vocab_size)
+    #     logits = gpt(x) # 4, 8, 65
+    #     logits = logits.view(batch_size*block_size, vocab_size)
         
-        y_ = y.view(batch_size*block_size)
+    #     y_ = y.view(batch_size*block_size)
         
-        optimizer.zero_grad()
+    #     optimizer.zero_grad()
 
-        loss_value = loss(logits,y_)
-        loss_value.backward()    
-        optimizer.step()
+    #     loss_value = loss(logits,y_)
+    #     loss_value.backward()    
+    #     optimizer.step()
         
-        print(f"iteration : {i}, loss : {loss_value.item():.4f}")
-        
-
-
+    #     print(f"iteration : {i}, loss : {loss_value.item():.4f}")
+    gpt.eval()
+    context = torch.zeros((1, 1), dtype=torch.long) 
+    with torch.no_grad():
+        generated = gpt.generate(context, max_new_tokens=200)
+    result = ''.join(itos[int(i)] for i in generated[0])
+    print(result)

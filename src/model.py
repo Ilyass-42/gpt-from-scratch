@@ -109,8 +109,17 @@ class GPT(nn.Module):
         out = self.blocs(x)
         out = self.layer_norm(out)
         out = self.linear(out)
-        return out    
-    
+        return out
+
+    def generate(self,x, max_new_tokens):
+        for _ in range(max_new_tokens):
+            x_cond = x[:, -self.positional_encoding.num_embeddings:]
+            logits = self.forward(x_cond)
+            last_logit = logits[:,-1,:]
+            proba = torch.softmax(last_logit,dim=-1)
+            next_char = torch.multinomial(proba, num_samples=1)
+            x = torch.cat([x, next_char], dim=1)
+        return x
 
 
 if __name__ == "__main__":

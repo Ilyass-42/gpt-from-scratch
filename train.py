@@ -69,7 +69,7 @@ if __name__=="__main__":
         
         print(f"iteration : {i}, loss : {loss_value.item():.4f}")
     gpt.eval()
-    context = torch.zeros((1, 1), dtype=torch.long) 
+    context = torch.zeros((1, 1), dtype=torch.long, device=device) 
     with torch.no_grad():
         generated = gpt.generate(context, max_new_tokens=200)
     result = ''.join(itos[int(i)] for i in generated[0])

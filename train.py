@@ -3,6 +3,8 @@ import torch.nn as nn
 from src.model import GPT
 from src.data import get_batch
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 if __name__=="__main__":
     with open("data/shakespeare.txt", "r") as f:
         text = f.read()
@@ -32,6 +34,7 @@ if __name__=="__main__":
     vocab_size = len(vocab)
 
     gpt = GPT(num_heads,n_embd,head_size, block_size, vocab_size)
+    gpt = gpt.to(device)
 
 
     optimizer = torch.optim.AdamW(gpt.parameters(), lr = 1e-3)
@@ -42,6 +45,7 @@ if __name__=="__main__":
             gpt.eval() # disables dropout
             with torch.no_grad():
                 x, y = get_batch(val_data, batch_size=batch_size, block_size=block_size)
+                x, y = x.to(device), y.to(device)
                 logits = gpt(x) # 4, 8, 65
                 logits = logits.view(batch_size*block_size, vocab_size)
                 y_ = y.view(batch_size*block_size)
@@ -50,7 +54,8 @@ if __name__=="__main__":
         gpt.train() # enables the dropout
 
         x, y = get_batch(train_data, batch_size=batch_size, block_size=block_size)
-
+        x, y = x.to(device), y.to(device)
+        
         logits = gpt(x) # 4, 8, 65
         logits = logits.view(batch_size*block_size, vocab_size)
         

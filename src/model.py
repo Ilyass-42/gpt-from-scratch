@@ -61,16 +61,26 @@ class FeedForward(nn.Module):
         
         return out
 
+class RMSNorm(nn.Module):
+    def __init__(self, n_embd, eps = 1e-6):
+        super().__init__()
+        self.gamma = nn.Parameter(torch.ones(n_embd))
+        self.eps = eps
+    def forward(self, x):
+        return (x/ torch.sqrt(torch.mean(x**2, dim=-1, keepdim=True)+self.eps))*self.gamma
+
+
+
 class Transformer(nn.Module):
     def __init__(self, num_heads, n_embd, head_size, block_size, dropout=0.1):
         super().__init__()
-        self.layer_norm_1 = nn.LayerNorm(n_embd)
+        self.layer_norm_1 = RMSNorm(n_embd)
         self.MultiHeadAttention = MultiHeadAttention(block_size=block_size,
                                                      n_embd=n_embd,
                                                      head_size=head_size,
                                                      num_heads=num_heads,
                                                      dropout=dropout)
-        self.layer_norm_2 = nn.LayerNorm(n_embd)
+        self.layer_norm_2 = RMSNorm(n_embd)
         self.mlp = FeedForward(n_embd=n_embd)
         self.dropout = nn.Dropout(dropout)
 
@@ -99,7 +109,7 @@ class GPT(nn.Module):
             Transformer(num_heads, n_embd, head_size, block_size, dropout=dropout)
             for _ in range(4) # 4 transformers 
             ])
-        self.layer_norm = nn.LayerNorm(n_embd)
+        self.layer_norm = RMSNorm(n_embd)
         self.linear = nn.Linear(n_embd,vocab_size)
 
     def forward(self,x):

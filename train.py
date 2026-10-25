@@ -68,6 +68,9 @@ if __name__=="__main__":
         optimizer.step()
         
         print(f"iteration : {i}, loss : {loss_value.item():.4f}")
+    
+    torch.save(gpt.state_dict(), "gpt_shakespeare.pth")
+    
     gpt.eval()
     context = torch.zeros((1, 1), dtype=torch.long, device=device) 
     with torch.no_grad():
